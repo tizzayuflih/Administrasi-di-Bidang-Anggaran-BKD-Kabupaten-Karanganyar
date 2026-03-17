@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrasi Bidang Anggaran BKD Kabupaten Karanganyar</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<div class="header-judul">
+    <h1>ADMINISTRASI DI BIDANG ANGGARAN</h1>
+    <h2>BADAN KEUANGAN DAERAH KABUPATEN KARANGANYAR</h2>
+</div>
+
+<div class="container">
+    <!--------------------------------------- PEMILIHAN JENIS DOKUMEN  ----------------------------------->
+    <div class="form" style="margin-bottom:20px;">
+        <label>Pilih Jenis Dokumen</label>
+        <select id="jenisDokumen" onchange="gantiJenisDokumen()">
+            <option value="">-- Pilih Jenis Dokumen --</option>
+            <option value="pergeseran">Laporan/Kajian Pergeseran Anggaran</option>
+            <option value="persetujuanDPA">SK Persetujuan Perubahan DPA-SKPD</option>
+        </select>
+    </div>
+
+    <!------------------------------------------ FORM KIRI-KANAN ----------------------------------------->
+    <div class="form-wrapper" id="isiDokumenWrapper"  style="display:none;">
+        <!-- KIRI: Pengisian Otomatis Dokumen -->
+        <div class="form kolom-kiri" id="kolomKiri">
+        </div>
+
+        <!-- KANAN: Pengaturan Cetak + Paraf Koordinasi -->
+        <div class="form kolom-kanan" style="padding-top:15px; margin-top:0; display:flex; flex-direction:column; gap:15px;">
+
+            <!-- Kotak Atas: Pengaturan Cetak -->
+            <div class="kotak" style="border:1px solid #ccc; padding:10px; background:#f9f9f9;">
+                <h3 style="margin-top:0; margin-bottom:10px;">Pengaturan Cetak</h3>
+
+                <label for="ukuranKertas" style="display:block; margin-bottom:5px;">Ukuran Kertas</label>
+                <select id="ukuranKertas" style="width:100%; padding:4px; margin-bottom:10px;">
+                    <option value="A4">A4</option>
+                    <option value="F4">F4</option>
+                    <option value="Letter">Letter</option>
+                </select>
+
+                <label>Font</label>
+                <select id="font">
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Calibri">Calibri</option>
+                    <option value="Bookman Old Style">Bookman Old Style</option>
+                </select>
+
+                <label>Spasi Baris</label>
+                <select id="lineSpacing">
+                    <option value="1">1</option>
+                    <option value="1.15">1.15</option>
+                    <option value="1.5" selected>1.5</option>
+                    <option value="2">2</option>
+                </select>
+
+                <label>Ukuran Font</label>
+                <input id="fontSize" type="number" value="12" min="8" max="20">
+
+                <label>Margin Atas (mm)</label>
+                <input id="marginAtas" type="number" value="40">
+
+                <label>Margin Bawah (mm)</label>
+                <input id="marginBawah" type="number" value="20">
+
+                <label>Margin Kiri (mm)</label>
+                <input id="marginKiri" type="number" value="25">
+
+                <label>Margin Kanan (mm)</label>
+                <input id="marginKanan" type="number" value="20">
+            </div>
+
+            <!-- Kotak Bawah: Paraf Koordinasi -->
+            <div class="kotak" style="border:1px solid #ccc; padding:10px; background:#f0f0f0;">
+                <h3 style="margin-top:0; margin-bottom:10px;">Paraf Koordinasi</h3>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" id="pakaiParaf">
+                    <span>Gunakan Paraf Koordinasi</span>
+                </label>
+
+                <label>Jumlah Pejabat</label>
+                <input id="jumlahPejabat" type="number" min="1" value="1" style="margin-top:10px;">
+
+                <div id="daftarPejabat" style="margin-top:10px; margin-bottom:10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOMBOL BUAT DOKUMEN -->
+    <button onclick="buatDokumen()" id="btnBuatDokumen" style="margin-top:15px; display:none;">Buat Dokumen</button>
+
+    <!-- HASIL DOKUMEN -->
+    <div id="hasilSection" style="display:none; margin-top:30px;">
+        <h3>Hasil Dokumen</h3>
+        <div id="hasilDokumen" class="preview"></div>
+
+        <button id="btnCetak" onclick="cetakDokumen()" style="display:none;">Cetak Dokumen</button>
+    </div>
+</div>
+
+<!------------------------------ Form Kiri: Pengisian Otomatis Dokumen ------------------------------->
+
+<!---------------------------------------- TEMPLATE PERGESERAN  -------------------------------------->
+<div id="templatePergeseran" style="display:none; padding-top:5px; margin-top:0;">
+    <h3 style="margin-top:0; margin-bottom:0px;">Pengisian Laporan/Kajian Pergeseran Anggaran</h3>
+    
+    <label for="yth" style="display:block; margin-bottom:0;">Yth.</label>
+    <input 
+        id="yth" 
+        placeholder="Masukkan penerima laporan" 
+        style="width:100%; margin-bottom:0px; box-sizing:border-box;">
+    <label>Lewat</label>
+    <input 
+        id="lewat" 
+        placeholder="Masukkan perantara laporan">
+
+    <label>Dari</label>
+    <input 
+        id="dari" 
+        placeholder="Masukkan pengirim laporan">
+    
+    <label>Tanggal dan Sifat Pembuatan Laporan</label>
+    <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <input 
+            id="tanggalPembuatanLaporan" 
+            placeholder="Tgl Bln Thn" 
+            style="flex: 1; padding: 5px;">
+        <select 
+            id="sifat" 
+            style="flex: 1; padding: 5px;">
+            <option value="">-- Pilih Sifat Laporan --</option>
+            <option value="Biasa">Biasa</option>
+            <option value="Penting">Penting</option>
+            <option value="Segera">Segera</option>
+            <option value="Rahasia">Rahasia</option>
+        </select>
+    </div>
+
+    <!-- <label>Tanggal Pembuatan Laporan</label>
+    <input 
+        id="tanggalPembuatanLaporan" 
+        placeholder="Tgl Bln Thn"> -->
+
+    <!-- <label>Nomor</label>
+    <input 
+        id="nomor" 
+        value="-" 
+        placeholder="-"> -->
+
+    <!-- <label>Sifat</label>
+    <select id="sifat">
+        <option value="">-- Pilih Sifat Laporan --</option>
+        <option value="Biasa">Biasa</option>
+        <option value="Penting">Penting</option>
+        <option value="Segera">Segera</option>
+        <option value="Rahasia">Rahasia</option>
+    </select> -->
+
+    <label>Tahun Anggaran</label>
+    <input 
+        id="tahunAnggaranPergeseran" 
+        placeholder="Masukkan tahun anggaran pergeseran">
+
+    <!-- <label>Lampiran</label>
+    <input 
+        id="lampiran" 
+        value="-" 
+        placeholder="Jumlah lampiran"> -->
+
+    <!-- <label>Hal</label>
+    <input 
+        id="hal" 
+        value="Laporan/Kajian Pergeseran Anggaran" 
+        placeholder="Perihal Dokumen"> -->
+    
+    <label>Hasil yang Dicapai</label>
+    <input 
+        id="hasilYgDicapai"
+        placeholder="Masukkan hasil yang dicapai">
+
+    <label>OPD/Kecamatan Permohonan Pergeseran Anggaran</label>
+    <input 
+        list="listOPD" 
+        id="kecamatan" 
+        name="kecamatan"
+        placeholder="Cari OPD/Kecamatan">
+
+    <datalist id="listOPD">
+    <option value="SEKRETARIAT DAERAH">
+    <option value="SEKRETARIAT DEWAN PERWAKILAN RAKYAT DAERAH">
+    <option value="INSPEKTORAT DAERAH">
+    <option value="BADAN KEUANGAN DAERAH">
+    <option value="BADAN PERENCANAAN PEMBANGUNAN, RISET, DAN INOVASI DAERAH">
+    <option value="BADAN KEPEGAWAIAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA">
+    <option value="BADAN KESATUAN BANGSA DAN POLITIK">
+    <option value="DINAS PENDIDIKAN DAN KEBUDAYAAN">
+    <option value="DINAS KESEHATAN">
+    <option value="RUMAH SAKIT UMUM DAERAH">
+    <option value="DINAS PEKERJAAN UMUM DAN PENATAAN RUANG">
+    <option value="DINAS PERUMAHAN RAKYAT DAN KAWASAN PERMUKIMAN">
+    <option value="DINAS SOSIAL">
+    <option value="DINAS PERDAGANGAN, PERINDUSTRIAN, DAN TENAGA KERJA">
+    <option value="DINAS KOPERASI, USAHA KECIL, DAN MENENGAH">
+    <option value="DINAS PENANAMAN MODAL DAN PELAYANAN TERPADU SATU PINTU">
+    <option value="DINAS LINGKUNGAN HIDUP">
+    <option value="DINAS PERTANIAN DAN PANGAN">
+    <option value="DINAS KEPENDUDUKAN DAN PENCATATAN SIPIL">
+    <option value="DINAS PERHUBUNGAN">
+    <option value="DINAS KOMUNIKASI DAN INFORMATIKA">
+    <option value="DINAS PARIWISATA, PEMUDA, DAN OLAHRAGA">
+    <option value="SATUAN POLISI PAMONG PRAJA">
+    <option value="DINAS PEMBERDAYAAN MASYARAKAT DAN DESA">
+    <option value="BADAN PENANGGULANGAN BENCANA DAERAH">
+
+    <option value="KECAMATAN KARANGANYAR">
+    <option value="KECAMATAN COLOMADU">
+    <option value="KECAMATAN GONDANGREJO">
+    <option value="KECAMATAN JATEN">
+    <option value="KECAMATAN TAWANGMANGU">
+    <option value="KECAMATAN MATESIH">
+    <option value="KECAMATAN JATIYOSO">
+    <option value="KECAMATAN JENAWI">
+    <option value="KECAMATAN MOJOGEDANG">
+    <option value="KECAMATAN KERJO">
+    <option value="KECAMATAN KEBAKKRAMAT">
+    <option value="KECAMATAN TASIKMADU">
+    <option value="KECAMATAN KARANGPANDAN">
+    <option value="KECAMATAN NGARGOYOSO">
+    <option value="KECAMATAN JUMAPOLO">
+    <option value="KECAMATAN JUMANTONO">
+    <option value="KECAMATAN KARANGRAYUNG">
+    </datalist>
+
+    <!-- <label>Nomor Surat Permohonan Pergeseran Anggaran</label>
+    <input 
+        id="nomorSuratPermohonanPergeseran" 
+        placeholder="Masukkan nomor">
+
+    <label>Tanggal Surat Permohonan Pergeseran Anggaran</label>
+    <input 
+        id="tanggalSuratPermohonanPergeseran" 
+        placeholder="Tgl Bln Thn"> -->
+    
+    <label>Nomor dan Tanggal Permohonan Pergeseran Anggaran</label>
+    <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <input 
+            id="nomorSuratPermohonanPergeseran" 
+            placeholder="Masukkan nomor" 
+            style="flex: 1; padding: 5px;">
+        <input 
+            id="tanggalSuratPermohonanPergeseran" 
+            placeholder="Tgl Bln Thn" 
+            style="flex: 1; padding: 5px;">
+    </div>
+
+    <label>Sub Kegiatan</label>
+    <input 
+        id="kegiatan" 
+        placeholder="Masukkan sub kegiatan">
+
+    <label>Rincian Perubahan</label>
+    <input 
+        id="rincianPerubahan" 
+        name="rincianPerubahan" 
+        placeholder="Masukkan rincian perubahan pergeseran anggaran">
+    
+    <label>Perihal</label>
+    <input 
+        id="perihalPergeseran" 
+        placeholder="Masukkan perihal">
+    
+    <!-- Judul Penandatanganan -->
+    <h3 style="margin-top:0; margin-bottom:-5px; font-size:14px;">
+        Penandatanganan
+    </h3>
+
+    <!-- Bagian: Kepala / Plt -->
+    <label style="display:block; margin-left:21px; margin-bottom:-5px;">Bagian</label>
+    <div style="display:flex; gap:20px; align-items:center; margin-bottom:-5px;">
+        <label style="display:flex; align-items:center; gap:5px; margin-left:21px; font-weight:normal;">
+            <input type="checkbox" id="bagianPltPergeseran">
+            Plt.
+        </label><label style="display:flex; margin-left:21px; align-items:center; gap:5px; font-weight:normal;">
+            <input type="checkbox" id="bagianKepalaPergeseran">
+            Kepala
+        </label>
+    </div>
+    <!-- Unit Kerja/OPD/Kecamatan -->
+    <label style="display:block; margin-left:21px; margin-bottom:5px;">
+        Unit Kerja/OPD/Kecamatan
+    </label>
+    
+    <div style="display:flex; align-items:center; gap:15px; margin-left:22px;">       
+        <input 
+            id="unitKerjaPersetujuan"
+            placeholder="Masukkan unit kerja/OPD/Kecamatan"
+            style="flex:1; padding:5px; min-width:0;"
+        >
+        <label style="
+            display:flex;
+            align-items:center;
+            gap:6px;
+            font-weight:normal;
+            white-space:nowrap;
+        ">
+            <input type="checkbox" id="cekKaranganyarPersetujuan">
+            Kabupaten Karanganyar
+        </label>
+    </div>
+
+    <!-- Nama Pejabat -->
+    <label style="display:block; margin-left:21px; margin-bottom:-5px;">Nama Pejabat</label>
+    <input 
+        id="namaPejabatPergeseran"
+        placeholder="Masukkan nama pejabat"
+        style="margin-left:21px; width:calc(100% - 21px);">
+
+    <!-- Keterangan Tambahan Pejabat (Optional) -->
+    <label style="display:block; margin-left:21px; margin-bottom:-5px;">Keterangan Tambahan Pejabat (Optional)</label>
+    <input 
+        id="keteranganPejabatPergeseran"
+        placeholder="Masukkan keterangan tambahan pejabat"
+        style="margin-left:21px; width:calc(100% - 21px);">
+
+    <!-- NIP Pejabat -->
+    <label style="display:block; margin-left:21px; margin-bottom:-5px;">NIP</label>
+    <input 
+        id="nipPejabatPergeseran"
+        placeholder="Masukkan NIP pejabat"
+        style="margin-left:21px; width:calc(100% - 21px);">
+</div>
+
+<!--------------------------------- TEMPLATE SK PERSETUJUAN DPA-SKPD --------------------------------->
+<div id="templatePersetujuan" style="display:none; padding-top:5px; margin-top:0;">
+    <h3 style="margin-top:0; margin-bottom:5px;">Pengisian SK Persetujuan Perubahan DPA-SKPD</h3>
+
+    <label style="display:block; margin-bottom:8px; margin-top:0px;">Perantara SK Persetujuan</label>
+    <div style="margin-left:21px; margin-top:-15px;">
+        <label style="display:block; margin-bottom:5px;">Bagian</label>
+        <div style="display:flex; gap:20px; align-items:center; margin-left:2px; ">
+            <label style="display:flex; align-items:center; gap:5px;font-weight:normal;">
+                <input type="checkbox" id="bagianPlt">
+                Plt.
+            </label>
+            <label style="display:flex; align-items:center; gap:5px;font-weight:normal;">
+                <input type="checkbox" id="bagianKepala">
+                Kepala
+            </label>
+        </div>
+    </div>
+
+    <label style="display:block; margin-left:21px; margin-bottom:5px;">SK Persetujuan dari OPD/Kecamatan</label>
+    <input list="listOPD" 
+        id="opdPersetujuanLewat"
+        placeholder="Cari OPD/Kecamatan" 
+        style="margin-left:21px; width:calc(100% - 21px);">
+
+    <label style="margin-left:22px;">Jabatan</label>
+    <input 
+        id="jabatanPersetujuan" 
+        placeholder="Jabatan pemberi SK Persetujuan Perubahan DPA-SKPD"
+        style="margin-left:21px; width:calc(100% - 21px);">
+
+    <label>Perubahan yang Diajukan</label>
+    <input 
+        id="perubahanPermohonan" 
+        placeholder="Masukkan perubahan">
+
+    <label>Pengirim Surat Permohonan SK Persetujuan</label>
+    <input 
+        list="listOPD" 
+        id="opdPermohonan" 
+        name="opdPermohonan"
+        placeholder="Cari OPD/Kecamatan">
+    
+    <!-- <label>Nomor Surat Permohonan SK Persetujuan</label>
+    <input 
+        id="nomorPermohonan"
+        placeholder="Masukkan nomor surat permohonan SK persetujuan">
+
+    <label>Tanggal Surat Permohonan SK Persetujuan</label>
+    <input  
+        id="tanggalPermohonan" 
+        placeholder="Tgl Bln Thn"> -->
+
+    <label>Nomor dan Tanggal Surat Permohonan SK Persetujuan</label>
+    <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <input 
+            id="nomorPermohonan"
+            placeholder="Masukkan nomor surat permohonan SK persetujuan"
+            style="flex: 1; padding: 5px;">
+        <input  
+            id="tanggalPermohonan" 
+            placeholder="Tgl Bln Thn"
+            style="flex: 1; padding: 5px;">
+    </div>
+
+    <label>Tahun Anggaran</label>
+    <input 
+        id="tahunPersetujuan" 
+        value="2026">
+
+    <label>Perihal</label>
+    <input 
+        id="perihalPermohonan"
+        placeholder="Masukkan perihal">
+
+    <label>Sub Kegiatan</label>
+    <input 
+        id="subkegiatanPermohonan"
+        placeholder="Masukkan sub kegiatan">
+    
+    <label>Pergeseran</label>
+    <input 
+        id="pergeseranPermohonan"
+        placeholder="Masukkan pergeseran yang diajukan">
+
+    <div style="margin-left:0px; margin-top:10px;">
+        <!-- Judul Penandatanganan -->
+        <h3 style="margin-top:0; margin-bottom:-5px; font-size:14px;">
+            Penandatanganan
+        </h3>
+    </div>
+
+        <!-- Tanggal -->
+        <label style="display:block; margin-left:21px; margin-bottom:-5px;">Tanggal</label>
+        <input 
+            id="tanggalPenetapanPersetujuan"
+            placeholder="Tgl Bln Thn"
+            style="margin-left:21px; width:calc(100% - 21px);">
+
+        <!-- Bagian: Kepala / Plt -->
+        <label style="display:block; margin-left:21px; margin-bottom:-5px;">Bagian</label>
+        <div style="display:flex; gap:20px; align-items:center; margin-bottom:-5px;">
+            <label style="display:flex;margin-left:22px; align-items:center; gap:5px; font-weight:normal;">
+                <input type="checkbox" id="bagianPltPenandatangan">
+                Plt.
+            </label>
+            <label style="display:flex; margin-left:22px; align-items:center; gap:5px; font-weight:normal;">
+                <input type="checkbox" id="bagianKepalaPenandatangan">
+                Kepala
+            </label>
+        </div>
+
+        <!-- Unit Kerja / OPD / Kecamatan -->
+        <label style="display:block; margin-left:21px; margin-bottom:5px;">
+            Unit Kerja/OPD/Kecamatan
+        </label>
+
+        <div style="display:flex; align-items:center; gap:15px; margin-left:22px;">
+            <input 
+                id="unitKerjaPersetujuan"
+                placeholder="Masukkan unit kerja/OPD/Kecamatan"
+                style="flex:1; padding:5px; min-width:0;"
+            >
+            <label style="
+                display:flex;
+                align-items:center;
+                gap:6px;
+                font-weight:normal;
+                white-space:nowrap;
+            ">
+                <input type="checkbox" id="cekKaranganyarPersetujuan">
+                Kabupaten Karanganyar
+            </label>
+        </div>
+
+        <!-- Bagian Unit Kerja/OPD/Kecamatan Pejabat -->
+        <label style="display:block; margin-left:21px; margin-bottom:-5px;">Bagian Unit Kerja/OPD/Kecamatan Pejabat</label>
+        <input 
+            id="bagianunitKerjaPersetujuan"
+            placeholder="Masukkan bagian unit kerja/OPD/Kecamatan pejabat"
+            style="margin-left:21px; width:calc(100% - 21px);">
+
+        <!-- Nama Pejabat -->
+        <label style="display:block; margin-left:21px; margin-bottom:-5px;">Nama Pejabat</label>
+        <input 
+            id="namaPejabatPersetujuan"
+            placeholder="Masukkan nama pejabat"
+            style="margin-left:21px; width:calc(100% - 21px);">
+
+        <!-- Keterangan Tambahan Pejabat (Optional) -->
+        <label style="display:block; margin-left:21px; margin-bottom:-5px;">Keterangan Tambahan Pejabat (Optional)</label>
+        <input 
+            id="keteranganPejabatPersetujuan"
+            placeholder="Masukkan keterangan tambahan pejabat"
+            style="margin-left:21px; width:calc(100% - 21px);">
+
+        <!-- NIP Pejabat -->
+        <label style="display:block; margin-left:21px; margin-bottom:-5px;">NIP</label>
+        <input 
+            id="nipPejabatPersetujuan"
+            placeholder="Masukkan NIP pejabat"
+            style="margin-left:21px; width:calc(100% - 21px);">
+    </div>
+    
+<script src="script.js"></script>
+</body>
+</html>
+

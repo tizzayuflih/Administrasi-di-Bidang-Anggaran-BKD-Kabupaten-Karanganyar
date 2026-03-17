@@ -1,0 +1,245 @@
+/* =========================
+   style.css FINAL
+   ========================= */
+
+/* Header Judul */
+.header-judul {
+    text-align: center;
+    background: white;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.header-judul h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.header-judul h2 {
+    margin: 4px 0;
+    font-size: 18px;
+} 
+
+/* Font default dan background */
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    padding: 0;
+    margin: 0;
+}
+
+/* Container kiri-kanan */
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Preview dokumen */
+#hasilDokumen {
+    background: #e5e5e5;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.preview-highlight {
+    background-color: #fff3b0;
+    padding: 1px 4px;
+    border-radius: 3px;
+
+    /* 🔥 INI KUNCI */
+    font-size: inherit;
+    font-family: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+    display: inline;
+}
+
+@media print {
+    .preview-highlight {
+        background: none !important;
+        padding: 0 !important;
+    }
+}
+
+/* Halaman dokumen (ukuran & margin dinamis via JS) */
+.halaman {
+    background: white;
+    box-shadow: none;
+    box-sizing: border-box;
+    padding: 0;
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto;
+}
+
+
+/* Kolom kiri (form input) */
+.kolom-kiri {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Kolom kanan (form pengaturan) */
+.kolom-kanan {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Form kiri & kanan */
+.form {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Label dan input */
+label {
+    margin-top: 6px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input, select {
+    width: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Tombol */
+button {
+    margin-top: 15px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007BFF;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Preview dokumen */
+.preview {
+    border: none;
+    padding: 0;
+    background: white;
+    min-height: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+/* Tabel dokumen */
+.preview table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.preview td,
+.preview th {
+    vertical-align: top;
+}
+
+/* Spasi paragraf dokumen */
+.preview p {
+    margin: 6px 0;
+}
+
+/* Paraf Koordinasi */
+.paraf-box {
+    margin-top: 15px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.checkbox-label input {
+    width: 16px;
+    height: 16px;
+}
+
+/*=========================
+   PRINT STYLES
+   ========================= */
+@media print {
+
+    /* sembunyikan UI */
+    .header-judul,
+    .container > .form,
+    .form-wrapper,
+    #btnBuatDokumen,
+    #btnCetak,
+    #hasilSection h3 {
+        display: none !important;
+    }
+
+    /* hilangkan margin browser/print default */
+    @page {
+        size: auto; /* bisa juga 'A4' atau 'F4' */
+        margin: 0mm;
+    }
+
+    body, html, #hasilSection, #hasilDokumen {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Halaman dokumen */
+    .halaman {
+        box-shadow: none !important;
+        margin: 0 !important;
+        width: 210mm !important;   /* A4 default */
+        min-height: 297mm !important; 
+        box-sizing: border-box !important;
+        page-break-after: always;
+        /* safety padding printer fisik */
+        padding: 5mm !important; /* override dari JS jika ada input user */
+    }
+
+    .preview-highlight {
+        background: none !important;
+        padding: 0 !important;
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .kolom-kiri, .kolom-kanan {
+        min-width: 100%;
+        width: 100%;
+    }
+}
+
+.form-wrapper {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
