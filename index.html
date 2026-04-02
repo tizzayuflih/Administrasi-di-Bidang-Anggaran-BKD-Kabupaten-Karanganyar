@@ -9,6 +9,23 @@
 </head>
 <body>
 
+<!-- LOGIN -->
+<div id="loginPage" style="text-align:center; margin-top:100px;">
+  <h2>Login Sistem Otomatisasi Pembuatan Dokumen Administrasi </h2>
+  <h2>Pada Bidang Anggaran BKD Kabupaten Karanganyar</h2>
+  <div style="position: relative; display: inline-block;">
+    <input type="password" id="password" placeholder="Masukkan password" 
+            style="width:250px; padding:8px; padding-right:35px;">
+
+    <span onclick="togglePassword()" 
+            style="position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer;">
+        👁️
+    </span></div>
+  <br><br>
+  <button onclick="login()">Masuk</button>
+</div>
+<div id="mainPage" style="display:none;">
+
 <div class="header-judul">
     <h1>ADMINISTRASI DI BIDANG ANGGARAN</h1>
     <h2>BADAN KEUANGAN DAERAH KABUPATEN KARANGANYAR</h2>
@@ -21,7 +38,7 @@
         <select id="jenisDokumen" onchange="gantiJenisDokumen()">
             <option value="">-- Pilih Jenis Dokumen --</option>
             <option value="pergeseran">Laporan/Kajian Pergeseran Anggaran</option>
-            <option value="persetujuanDPA">SK Persetujuan Perubahan DPA-SKPD</option>
+            <option value="persetujuanDPA">Surat Keterangan Persetujuan tentang Perubahan Dokumen Pelaksanaan  Anggaran  (DPA-SKPD)</option>
         </select>
     </div>
 
@@ -300,7 +317,7 @@
     
     <div style="display:flex; align-items:center; gap:15px; margin-left:22px;">       
         <input 
-            id="unitKerjaPersetujuan"
+            id="unitKerjaPergeseran"
             placeholder="Masukkan unit kerja/OPD/Kecamatan"
             style="flex:1; padding:5px; min-width:0;"
         >
@@ -340,7 +357,7 @@
 
 <!--------------------------------- TEMPLATE SK PERSETUJUAN DPA-SKPD --------------------------------->
 <div id="templatePersetujuan" style="display:none; padding-top:5px; margin-top:0;">
-    <h3 style="margin-top:0; margin-bottom:5px;">Pengisian SK Persetujuan Perubahan DPA-SKPD</h3>
+    <h3 style="margin-top:0; margin-bottom:5px;">Pengisian DPA-SKPD</h3>
 
     <label style="display:block; margin-bottom:8px; margin-top:0px;">Perantara SK Persetujuan</label>
     <div style="margin-left:21px; margin-top:-15px;">
@@ -503,6 +520,27 @@
     </div>
     
 <script src="script.js"></script>
+<script>
+function login() {
+  const pass = document.getElementById("password").value;
+
+  if (pass === "anggaran123") {
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("mainPage").style.display = "block";
+  } else {
+    alert("Password salah!");
+  }
+}
+
+function togglePassword() {
+  const input = document.getElementById("password");
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+}
+</script>
 </body>
 </html>
 
