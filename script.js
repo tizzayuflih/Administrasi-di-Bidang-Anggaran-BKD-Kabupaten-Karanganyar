@@ -1041,18 +1041,14 @@ function cetakPersetujuan() {
     applyPrintSettingPersetujuan();
 
     let opd = document.getElementById("opdPermohonan").value
+        .replace(/kecamatan/gi, "")
         .trim()
         .toLowerCase()
         .split(" ")
-        .filter(word => word !== "")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
 
-    let namaFile = "SK Persetujuan Perubahan DPA-SKPD.pdf";
-
-    if (opd) {
-        namaFile = opd + " - SK Persetujuan Perubahan DPA-SKPD.pdf";
-    }
+    let namaFile = opd + " - SK Persetujuan Perubahan DPA-SKPD.pdf";
 
     document.title = namaFile;
 
