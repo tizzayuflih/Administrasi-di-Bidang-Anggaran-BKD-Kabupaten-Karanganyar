@@ -581,21 +581,22 @@ function gantiJenisDokumen() {
     let btn = document.getElementById("btnBuatDokumen");
     let btnCetak = document.getElementById("btnCetak");
 
-    // RESET HASIL DOKUMEN
+    // RESET HASIL
     document.getElementById("hasilSection").style.display = "none";
     document.getElementById("hasilDokumen").innerHTML = "";
     btnCetak.style.display = "none";
 
-    // update font dropdown order every time dokumen type changes
-    updateFontOptions(jenis);
-    updateUkuranKertas(jenis);
-    updateSpasiBaris(jenis);
-
+    // 🚨 TAMBAH INI
     if (jenis === "") {
         wrapper.style.display = "none";
         btn.style.display = "none";
-        return;
+        return; // STOP di sini, jangan lanjut
     }
+
+    // ⬇️ BARU JALAN kalau udah milih
+    updateFontOptions(jenis);
+    updateUkuranKertas(jenis);
+    updateSpasiBaris(jenis);
 
     wrapper.style.display = "flex";
     btn.style.display = "inline-block";
@@ -604,33 +605,11 @@ function gantiJenisDokumen() {
         kolomKiri.innerHTML =
             document.getElementById("templatePergeseran").innerHTML;
         btnCetak.setAttribute("onclick", "cetakDokumen()");
-        // default margins for pergeseran documents
-        const leftMargin = document.getElementById("marginKiri");
-        const topMargin = document.getElementById("marginAtas");
-        if (leftMargin) {
-            leftMargin.value = 25;
-        }
-        if (topMargin) {
-            topMargin.value = 40;
-        }
     } 
     else if (jenis === "persetujuanDPA") {
         kolomKiri.innerHTML =
             document.getElementById("templatePersetujuan").innerHTML;
         btnCetak.setAttribute("onclick", "cetakPersetujuan()");
-        // use larger margins for persetujuan documents
-        const rightMargin = document.getElementById("marginKanan");
-        const leftMargin = document.getElementById("marginKiri");
-        const bottomMargin = document.getElementById("marginBawah");
-        if (rightMargin) {
-            rightMargin.value = 18;
-        }
-        if (leftMargin) {
-            leftMargin.value = 20;
-        }
-        if (bottomMargin) {
-            bottomMargin.value = 15;
-        }
     }
 }
 
